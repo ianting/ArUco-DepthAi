@@ -80,12 +80,17 @@ qRight = device.getOutputQueue(name="right", maxSize=4, blocking=False)
 color = (255, 255, 255)
 
 #ArUco declarations
-mtx=np.load('aruco_dir/datacalib_mtx_webcam.pkl', allow_pickle=True)
-dist=np.load('aruco_dir/datacalib_dist_webcam.pkl', allow_pickle=True)
+aruco_dict = aruco.getPredefinedDictionary(aruco.DICT_6X6_250)
+parameters =  aruco.DetectorParameters()
+# detector = aruco.ArucoDetector(dictionary, parameters)
+
+
+mtx=np.load('datacalib_mtx_webcam.pkl', allow_pickle=True)
+dist=np.load('datacalib_dist_webcam.pkl', allow_pickle=True)
 size_of_marker =  0.0145
 length_of_axis = 0.01
-aruco_dict = aruco.Dictionary_get(aruco.DICT_6X6_250)
-parameters =  aruco.DetectorParameters_create()
+# aruco_dict = aruco.Dictionary_get(aruco.DICT_6X6_250)
+# parameters =  aruco.DetectorParameters_create()
 
 while True:
     inDepth = depthQueue.get() # blocking call, will wait until a new data has arrived
@@ -139,7 +144,7 @@ while True:
         imaxis = aruco.drawDetectedMarkers(frameRight.copy(), corners, ids)
         if tvecs is not None:
             for i in range(len(tvecs)):
-                imaxis = aruco.drawAxis(imaxis, mtx, dist, rvecs[i], tvecs[i], length_of_axis)
+                imaxis = cv2.drawFrameAxes(imaxis, mtx, dist, rvecs[i], tvecs[i], length_of_axis)
                 rvec=np.squeeze(rvecs[0], axis=None)
                 tvec=np.squeeze(tvecs[0], axis=None)
                 tvec=np.expand_dims(tvec, axis=1)
